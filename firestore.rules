@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow public read access to all collections
+    match /{document=**} {
+      allow read: if true;
+    }
+
+    // Events collection - public read, admin write
+    match /events/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Routes collection - public read, admin write
+    match /routes/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Gallery collection - public read, admin write
+    match /gallery/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Members collection - public read, admin write
+    match /members/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Useful Links collection - public read, admin write
+    match /usefulLinks/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Contact submissions - anyone can create, admin can read
+    match /contactSubmissions/{document=**} {
+      allow create: if request.auth == null || request.auth != null;
+      allow read, write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Event registrations - authenticated users can create their own
+    match /eventRegistrations/{document=**} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && (request.auth.uid == resource.data.userId || request.auth.token.admin == true);
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.userId || request.auth.token.admin == true);
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "rodactiva-c1b0b"
+  },
+  "targets": {
+    "rodactiva-c1b0b": {
+      "hosting": {
+        "rodactiva": [
+          "rodactiva-c1b0b"
+        ]
+      }
+    }
+  }
+}
