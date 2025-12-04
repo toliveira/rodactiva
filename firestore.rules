@@ -48,5 +48,19 @@ service cloud.firestore {
       allow read: if request.auth != null && (request.auth.uid == resource.data.userId || request.auth.token.admin == true);
       allow update, delete: if request.auth != null && (request.auth.uid == resource.data.userId || request.auth.token.admin == true);
     }
+
+    // Comments sub-collection (admin moderation)
+    match /posts/{postId}/comments/{commentId} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Admin access requests
+    match /admin_requests/{requestId} {
+      // Anyone can submit a request
+      allow create: if true;
+      // Only admins can read or modify requests
+      allow read, update, delete: if request.auth != null && request.auth.token.admin == true;
+    }
   }
 }

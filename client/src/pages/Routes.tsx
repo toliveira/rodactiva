@@ -2,6 +2,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MapPin, Download, Clock, TrendingUp, Loader } from 'lucide-react';
 import { useFirestoreDocuments } from '@/hooks/useFirestore';
+import SEO from '@/components/SEO';
 
 interface Route {
   id: string;
@@ -38,6 +39,10 @@ export default function Routes() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+      <SEO
+        title="Percursos GPS"
+        description="Descarregue os percursos GPS dos nossos eventos de BTT e Trail."
+      />
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -122,7 +127,7 @@ export default function Routes() {
                           Tipo
                         </div>
                         <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                          {route.type.toUpperCase()}
+                          {route?.type?.toUpperCase()}
                         </p>
                       </div>
                     </div>

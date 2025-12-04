@@ -5,6 +5,7 @@ import { Image, Play, FileText, Loader } from 'lucide-react';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
 import { useFirestoreDocuments } from '@/hooks/useFirestore';
+import SEO from '@/components/SEO';
 
 interface GalleryItem {
   id: string;
@@ -41,6 +42,10 @@ export default function Gallery() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+      <SEO
+        title="Galeria"
+        description="Fotos e vídeos dos eventos da Rodactiva."
+      />
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">

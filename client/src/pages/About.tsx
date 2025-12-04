@@ -1,15 +1,15 @@
 import { Card } from '@/components/ui/card';
 import { Users, Target, Award, Heart, MapPin, Calendar, Bike } from 'lucide-react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { useFirestoreDocuments } from '@/hooks/useFirestore';
 
 export default function About() {
   return (
     <div className="min-h-screen">
-      <Helmet>
-        <title>Sobre Nós - Rodactiva</title>
-        <meta name="description" content="Conheça a história da RODACTIVA, associação criada em 2011 dedicada à prática de BTT e Ciclismo em Castro Marim, Algarve." />
-      </Helmet>
+      <SEO
+        title="Sobre Nós"
+        description="Conheça a história da RODACTIVA, associação criada em 2011 dedicada à prática de BTT e Ciclismo em Castro Marim, Algarve."
+      />
 
       {/* Hero Section with Background */}
       <section className="relative py-32 px-4 overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-orange-900">
@@ -19,13 +19,6 @@ export default function About() {
         </div>
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="mb-6">
-            <img
-              src="/rodactiva-logo.png"
-              alt="Rodactiva Logo"
-              className="h-24 w-auto mx-auto object-contain"
-            />
-          </div>
           <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white">
             Sobre a Rodactiva
           </h1>
@@ -159,36 +152,12 @@ export default function About() {
 
       {/* Team Section */}
       <TeamSection />
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-orange-500 to-red-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Junte-se à Nossa Comunidade
-          </h2>
-          <p className="text-xl text-orange-50 mb-8">
-            Faça parte da família Rodactiva e descubra as maravilhas do ciclismo em Castro Marim.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/activities" className="inline-block">
-              <button className="bg-white hover:bg-slate-100 text-orange-600 px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
-                Ver Eventos
-              </button>
-            </a>
-            <a href="/contact" className="inline-block">
-              <button className="bg-orange-700 hover:bg-orange-800 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
-                Contacte-nos
-              </button>
-            </a>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
 
 function TeamSection() {
-  const { data: members, loading, error } = useFirestoreDocuments<any>('members', [], { realtime: true });
+  const { data: team, loading, error } = useFirestoreDocuments<any>('team', [], { realtime: true });
 
   if (loading) return (
     <div className="flex justify-center py-12">
@@ -196,7 +165,7 @@ function TeamSection() {
     </div>
   );
 
-  if (error || !members.length) return null;
+  if (error || !team.length) return null;
 
   return (
     <section className="py-20 px-4 bg-slate-50 dark:bg-slate-800/50">
@@ -209,18 +178,18 @@ function TeamSection() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {members.map((member) => (
+          {team.map((person) => (
             <Card
-              key={member.id}
+              key={person.id}
               className="overflow-hidden hover:shadow-lg transition-shadow duration-300"
             >
               <div className="h-2 bg-gradient-to-r from-orange-500 to-red-600"></div>
               <div className="p-6">
                 <div className="mb-4">
-                  {member.image ? (
+                  {person.image ? (
                     <img
-                      src={member.image}
-                      alt={member.name}
+                      src={person.image}
+                      alt={person.name}
                       className="w-16 h-16 rounded-full object-cover mb-4"
                     />
                   ) : (
@@ -229,19 +198,19 @@ function TeamSection() {
                     </div>
                   )}
                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-                    {member.name}
+                    {person.name}
                   </h3>
                   <p className="text-orange-600 dark:text-orange-400 font-semibold mb-3">
-                    {member.role}
+                    {person.role}
                   </p>
                 </div>
 
                 <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  {member.bio}
+                  {person.bio}
                 </p>
 
                 <div className="flex flex-wrap gap-2">
-                  {member.specialty?.split(', ').map((spec: string, index: number) => (
+                  {person.specialty?.split(', ').map((spec: string, index: number) => (
                     <span
                       key={index}
                       className="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-sm font-semibold"

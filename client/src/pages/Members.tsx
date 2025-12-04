@@ -10,7 +10,7 @@ import { Loader, Upload, CheckCircle, AlertCircle } from 'lucide-react';
 import { db, storage } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 
 export default function Members() {
   const [loading, setLoading] = useState(false);
@@ -61,13 +61,13 @@ export default function Members() {
 
       // Upload photo if exists
       if (photo) {
-        const storageRef = ref(storage, `member-registrations/${Date.now()}_${photo.name}`);
+        const storageRef = ref(storage, `members/${Date.now()}_${photo.name}`);
         const snapshot = await uploadBytes(storageRef, photo);
         photoUrl = await getDownloadURL(snapshot.ref);
       }
 
       // Save to Firestore
-      await addDoc(collection(db, 'member_registrations'), {
+      await addDoc(collection(db, 'members'), {
         ...formData,
         photoUrl,
         status: 'pending',
@@ -101,10 +101,10 @@ export default function Members() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <Helmet>
-        <title>Sócios - Rodactiva</title>
-        <meta name="description" content="Torna-te sócio da Rodactiva e junta-te à nossa comunidade de ciclismo em Castro Marim." />
-      </Helmet>
+      <SEO
+        title="Sócios"
+        description="Torna-te sócio da Rodactiva e junta-te à nossa comunidade de ciclismo em Castro Marim."
+      />
 
       {/* Hero Section */}
       <section className="relative py-24 px-4 overflow-hidden">

@@ -92,10 +92,10 @@ export default function Footer() {
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-orange-400" />
                 <a
-                  href="mailto:rodactiva.trilhos@gmail.com"
+                  href="mailto:rodactiva.geral@gmail.com"
                   className="text-slate-400 hover:text-orange-400"
                 >
-                  rodactiva.trilhos@gmail.com
+                  rodactiva.geral@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-2">
@@ -105,7 +105,7 @@ export default function Footer() {
               <li className="flex items-center gap-2">
                 <div className="flex gap-3">
                   <a
-                    href="https://www.facebook.com/rodactiva"
+                    href="https://www.facebook.com/profile.php?id=100064405251354"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-slate-400 hover:text-orange-400"
@@ -113,7 +113,7 @@ export default function Footer() {
                     <FaFacebook className="w-5 h-5" />
                   </a>
                   <a
-                    href="https://www.youtube.com/rodactiva"
+                    href="https://www.youtube.com/channel/UCTrjnZhzJx0T-eSZGQZmD0w"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-slate-400 hover:text-orange-400"
@@ -136,6 +136,9 @@ export default function Footer() {
               </Link>
               <Link href="/terms">
                 <span className="hover:text-orange-400 cursor-pointer">Termos</span>
+              </Link>
+              <Link href="/private">
+                <span className="hover:text-orange-400 cursor-pointer">Área Privada</span>
               </Link>
             </div>
           </div>

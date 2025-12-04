@@ -189,43 +189,117 @@ const galleryItems = [
   },
 ];
 
-const members = [
+const team = [
   {
-    name: 'João Silva',
-    role: 'Fundador & Coordenador',
+    name: 'António Viegas',
+    role: 'Presidente ',
     bio: 'Apaixonado por desporto outdoor com mais de 15 anos de experiência em BTT e organização de eventos.',
     specialty: 'BTT, Organização',
+    category: 'Direcção',
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   },
   {
-    name: 'Maria Santos',
-    role: 'Coordenadora de Eventos',
+    name: 'Mario Ribeiro',
+    role: 'Vice-Presidente',
     bio: 'Especialista em logística e coordenação de eventos desportivos de grande escala.',
     specialty: 'Eventos, Logística',
+    category: 'Direcção',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   },
   {
-    name: 'Pedro Costa',
-    role: 'Responsável de Segurança',
+    name: 'Pedro Morais',
+    role: 'Secretário',
     bio: 'Profissional de segurança com certificação em primeiros socorros e resgate em montanha.',
     specialty: 'Segurança, Resgate',
+    category: 'Direcção',
     image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   },
   {
-    name: 'Ana Oliveira',
-    role: 'Coordenadora de Comunicação',
-    bio: 'Responsável pela comunicação e marketing da associação nas redes sociais e media.',
-    specialty: 'Marketing, Comunicação',
+    name: 'Gonçalo Mascarenhas',
+    role: 'Tesoureiro',
+    bio: 'Responsável pela gestão financeira da associação.',
+    specialty: 'Finanças',
+    category: 'Direcção',
     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   },
+  {
+    name: 'Acácio Rito',
+    role: 'Vogal',
+    bio: 'Responsável pela gestão financeira da associação.',
+    specialty: 'Finanças',
+    category: 'Direcção',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  },
+  {
+    name: 'Vítor Palma',
+    role: 'Presidente',
+    bio: 'Responsável pela gestão financeira da associação.',
+    specialty: 'Finanças',
+    category: 'Assembleia Geral',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  },
+  {
+    name: 'Carlos Santos',
+    role: 'Vice-Presidente',
+    bio: 'Responsável pela gestão financeira da associação.',
+    specialty: 'Finanças',
+    category: 'Assembleia Geral',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  },
+  {
+    name: 'Sandra Rito',
+    role: 'Secretario',
+    bio: 'Responsável pela gestão financeira da associação.',
+    specialty: 'Finanças',
+    category: 'Assembleia Geral',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  },
+  {
+    name: 'Filipe Carmo',
+    role: 'Presidente',
+    bio: 'Responsável pela gestão financeira da associação.',
+    specialty: 'Finanças',
+    category: 'Conselho Fiscal',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  },
+  {
+    name: 'Filipa Madeira',
+    role: 'Vice-Presidente',
+    bio: 'Responsável pela gestão financeira da associação.',
+    specialty: 'Finanças',
+    category: 'Conselho Fiscal',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  },
+  {
+    name: 'Ricardo Fonseca',
+    role: 'Secretario',
+    bio: 'Responsável pela gestão financeira da associação.',
+    specialty: 'Finanças',
+    category: 'Conselho Fiscal',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  }
 ];
 
 const usefulLinks = [
@@ -237,9 +311,9 @@ const usefulLinks = [
     updatedAt: serverTimestamp(),
   },
   {
-    title: 'Federação Portuguesa de Ciclismo',
-    url: 'https://www.federacaociclismo.pt/',
-    category: 'sports',
+    title: 'Junta de Freguesia de Castro Marim',
+    url: 'https://www.jf-castromarim.pt/',
+    category: 'government',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   },
@@ -251,12 +325,19 @@ const usefulLinks = [
     updatedAt: serverTimestamp(),
   },
   {
-    title: 'Junta de Freguesia de Castro Marim',
-    url: 'https://www.jf-castromarim.pt/',
-    category: 'government',
+    title: 'Odiana',
+    url: 'https://odiana.pt/',
+    category: 'sports',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   },
+  {
+    title: 'Federação Portuguesa de Ciclismo',
+    url: 'https://www.fpciclismo.pt/',
+    category: 'sports',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  }
 ];
 
 async function seedFirestore() {
@@ -285,11 +366,11 @@ async function seedFirestore() {
       console.log('  ✓ Gallery item added:', docRef.id);
     }
 
-    // Add members
+    // Add Team
     console.log('Adding team members...');
-    for (const member of members) {
-      const docRef = await addDoc(collection(db, 'members'), member);
-      console.log('  ✓ Member added:', docRef.id);
+    for (const person of team) {
+      const docRef = await addDoc(collection(db, 'team'), person);
+      console.log('  ✓ Team member added:', docRef.id);
     }
 
     // Add useful links

@@ -1,6 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { HelmetProvider } from "react-helmet-async";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -15,9 +14,10 @@ import Gallery from "./pages/Gallery";
 import Members from "./pages/Members";
 import Contact from "./pages/Contact";
 import PrivateArea from "./pages/PrivateArea";
-import Registration from "./pages/Registration";
+import AdminDashboard from "./pages/Admin/Dashboard";
+import AdminLogin from "./pages/Admin/Login";
 
-function Router() {
+function SiteRouter() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -31,7 +31,7 @@ function Router() {
           <Route path={"/members"} component={Members} />
           <Route path={"/contact"} component={Contact} />
           <Route path={"/private"} component={PrivateArea} />
-          <Route path={"/registration"} component={Registration} />
+          <Route path={"/403"} component={() => <h1 className="text-2xl text-red-600">Forbidden</h1>} />
           <Route path={"/404"} component={NotFound} />
           <Route component={NotFound} />
         </Switch>
@@ -48,12 +48,14 @@ function App() {
         defaultTheme="light"
         switchable
       >
-        <HelmetProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </HelmetProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Switch>
+            <Route path="/admin/login" component={AdminLogin} />
+            <Route path="/admin/*" component={AdminDashboard} />
+            <Route component={SiteRouter} />
+          </Switch>
+        </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

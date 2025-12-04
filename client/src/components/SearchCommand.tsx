@@ -1,12 +1,27 @@
 import { useEffect, useState } from "react";
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { useLocation } from "wouter";
+import { useFirestoreDocuments } from "@/hooks/useFirestore";
+
+interface SearchRoute {
+    id: string;
+    name: string;
+}
+
+interface SearchEvent {
+    id: string;
+    title: string;
+}
 
 export default function SearchCommand() {
     const [open, setOpen] = useState(false);
     const [, setLocation] = useLocation();
+
+    // Fetch data for search
+    const { data: routes } = useFirestoreDocuments<SearchRoute>('routes');
+    const { data: events } = useFirestoreDocuments<SearchEvent>('events');
 
     useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -66,10 +81,33 @@ export default function SearchCommand() {
                         <CommandItem onSelect={() => runCommand(() => setLocation("/private"))}>
                             Private Area
                         </CommandItem>
-                        <CommandItem onSelect={() => runCommand(() => setLocation("/registration"))}>
-                            Registration
-                        </CommandItem>
                     </CommandGroup>
+
+                    {events.length > 0 && (
+                        <>
+                            <CommandSeparator />
+                            <CommandGroup heading="Events">
+                                {events.map((event) => (
+                                    <CommandItem key={event.id} onSelect={() => runCommand(() => setLocation("/activities"))}>
+                                        {event.title}
+                                    </CommandItem>
+                                ))}
+                            </CommandGroup>
+                        </>
+                    )}
+
+                    {routes.length > 0 && (
+                        <>
+                            <CommandSeparator />
+                            <CommandGroup heading="Routes">
+                                {routes.map((route) => (
+                                    <CommandItem key={route.id} onSelect={() => runCommand(() => setLocation("/routes"))}>
+                                        {route.name}
+                                    </CommandItem>
+                                ))}
+                            </CommandGroup>
+                        </>
+                    )}
                 </CommandList>
             </CommandDialog>
         </>

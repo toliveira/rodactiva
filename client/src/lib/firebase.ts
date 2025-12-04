@@ -28,6 +28,17 @@ export const storage = getStorage(app);
 // Initialize Auth
 export const auth = getAuth(app);
 
+import { onIdTokenChanged } from 'firebase/auth';
+
+// Expose custom claims on the auth user object
+onIdTokenChanged(auth, async (user) => {
+  if (user) {
+    const token = await user.getIdTokenResult();
+    // attach claims for easy access in UI
+    (user as any).token = token.claims;
+  }
+});
+
 // Initialize Analytics (only if supported)
 export let analytics: any = null;
 if (typeof window !== 'undefined') {
@@ -38,8 +49,11 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// Initialize App Check
-if (import.meta.env.VITE_FIREBASE_RECAPTCHA_KEY) {
+// Check if we're using emulators
+const useEmulator = import.meta.env.VITE_FIREBASE_USE_EMULATOR === 'true';
+
+// Initialize App Check (only if NOT using emulator and key is provided)
+if (!useEmulator && import.meta.env.VITE_FIREBASE_RECAPTCHA_KEY) {
   initializeAppCheck(app, {
     provider: new ReCaptchaV3Provider(import.meta.env.VITE_FIREBASE_RECAPTCHA_KEY),
     isTokenAutoRefreshEnabled: true,
@@ -47,16 +61,20 @@ if (import.meta.env.VITE_FIREBASE_RECAPTCHA_KEY) {
 }
 
 // Connect to emulators in development
-if (import.meta.env.DEV) {
-  if (import.meta.env.VITE_FIREBASE_USE_EMULATOR === 'true') {
-    try {
-      connectFirestoreEmulator(db, 'localhost', 8080);
-      connectStorageEmulator(storage, 'localhost', 9199);
-      connectAuthEmulator(auth, 'http://localhost:9099');
-    } catch (error) {
-      // Emulators might already be connected
-      console.debug('Firebase emulators already initialized or not available');
-    }
+if (import.meta.env.DEV && useEmulator) {
+  try {
+    const firestorePort = import.meta.env.VITE_FIRESTORE_EMULATOR_PORT || 8080;
+    const authPort = import.meta.env.VITE_AUTH_EMULATOR_PORT || 9099;
+    const storagePort = import.meta.env.VITE_STORAGE_EMULATOR_PORT || 9199;
+
+    connectFirestoreEmulator(db, 'localhost', Number(firestorePort));
+    connectAuthEmulator(auth, `http://localhost:${authPort}`);
+    connectStorageEmulator(storage, 'localhost', Number(storagePort));
+
+    console.log('✅ Firebase emulators connected');
+  } catch (error) {
+    // Emulators might already be connected
+    console.debug('Firebase emulators already initialized or not available');
   }
 }
 

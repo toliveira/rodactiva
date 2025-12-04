@@ -138,7 +138,6 @@ rodactiva-website/
 - **usefulLinks**: External links
 - **contactSubmissions**: Contact form submissions
 - **eventRegistrations**: User event registrations
-- **member_registrations**: New member registrations
 
 ### Security Rules
 

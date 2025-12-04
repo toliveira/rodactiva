@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users, Zap, Filter, Loader } from 'lucide-react';
 import { useFirestoreDocuments } from '@/hooks/useFirestore';
-import { where } from 'firebase/firestore';
+import SEO from '@/components/SEO';
 
 interface Activity {
   id: string;
@@ -53,6 +53,10 @@ export default function Activities() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+      <SEO
+        title="Eventos"
+        description="Próximos eventos de BTT, Trail e Caminhada em Castro Marim."
+      />
       {/* Hero Section */}
       {/* Hero Section */}
       <section className="relative py-20 px-4 overflow-hidden">

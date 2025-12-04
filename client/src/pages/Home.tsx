@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { ArrowRight, Calendar, MapPin, Users } from 'lucide-react';
 import { useFirestoreDocuments } from '@/hooks/useFirestore';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 
 interface Event {
   id: string;
@@ -30,10 +30,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Helmet>
-        <title>Rodactiva - Desporto de Aventura em Castro Marim</title>
-        <meta name="description" content="Associação de Desporto de Aventura em Castro Marim. Eventos de BTT, Trail Running e muito mais. Junte-se a nós!" />
-      </Helmet>
+      <SEO
+        title="Desporto de Aventura em Castro Marim"
+        description="Associação de Desporto de Aventura em Castro Marim. Eventos de BTT, Trail Running e muito mais. Junte-se a nós!"
+      />
       {/* Hero Section */}
       <section className="relative py-32 px-4 overflow-hidden">
         {/* Background Image */}
