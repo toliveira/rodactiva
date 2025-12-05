@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { db } from '@/lib/firebase';
 import {
   collection,
@@ -9,6 +9,8 @@ import {
   getDoc,
   onSnapshot,
   QueryConstraint,
+  queryEqual,
+  Query,
 } from 'firebase/firestore';
 
 interface UseFirestoreOptions {
@@ -24,11 +26,25 @@ export function useFirestoreDocuments<T>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  // Use a ref to store the query and only update it when it changes semantically
+  // This prevents infinite loops when constraints array is recreated on every render
+  const queryRef = useRef<Query | null>(null);
+  
+  // Create the query object
+  const immediateQuery = query(collection(db, collectionName), ...constraints);
+
+  // Only update the ref if the query is semantically different
+  if (!queryRef.current || !queryEqual(immediateQuery, queryRef.current)) {
+    queryRef.current = immediateQuery;
+  }
+
   useEffect(() => {
+    const q = queryRef.current;
+    if (!q) return;
+
     const fetchData = async () => {
       try {
         setLoading(true);
-        const q = query(collection(db, collectionName), ...constraints);
         const querySnapshot = await getDocs(q);
         const documents = querySnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -46,7 +62,6 @@ export function useFirestoreDocuments<T>(
 
     if (options.realtime) {
       // Real-time listener
-      const q = query(collection(db, collectionName), ...constraints);
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const documents = querySnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -62,7 +77,7 @@ export function useFirestoreDocuments<T>(
       // One-time fetch
       fetchData();
     }
-  }, [collectionName, constraints, options.realtime]);
+  }, [queryRef.current, options.realtime]);
 
   return { data, loading, error };
 }
@@ -107,7 +122,6 @@ export function useFirestoreDocument<T>(
     };
 
     if (options.realtime) {
-      // Real-time listener
       const docRef = doc(db, collectionName, documentId);
       const unsubscribe = onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
@@ -125,7 +139,6 @@ export function useFirestoreDocument<T>(
 
       return () => unsubscribe();
     } else {
-      // One-time fetch
       fetchData();
     }
   }, [collectionName, documentId, options.realtime]);

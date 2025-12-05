@@ -182,26 +182,26 @@ export default function Members() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="birthPlace">Naturalidade</Label>
-                    <Input
-                      id="birthPlace"
-                      name="birthPlace"
-                      required
-                      value={formData.birthPlace}
-                      onChange={handleInputChange}
-                      className="bg-slate-50 dark:bg-slate-800"
-                    />
-                  </div>
-
                   <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="birthPlace">Naturalidade</Label>
+                      <Input
+                        id="birthPlace"
+                        name="birthPlace"
+                        required
+                        value={formData.birthPlace}
+                        onChange={handleInputChange}
+                        className="bg-slate-50 dark:bg-slate-800"
+                      />
+                    </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="nationality">Nacionalidade</Label>
                       <Select
                         value={formData.nationality}
                         onValueChange={(value) => setFormData(prev => ({ ...prev, nationality: value }))}
                       >
-                        <SelectTrigger className="bg-slate-50 dark:bg-slate-800">
+                        <SelectTrigger className="bg-slate-50 dark:bg-slate-800 w-full">
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
@@ -211,7 +211,9 @@ export default function Members() {
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
 
+                  <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="birthDate">Data de nascimento</Label>
                       <Input
@@ -224,24 +226,24 @@ export default function Members() {
                         className="bg-slate-50 dark:bg-slate-800"
                       />
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label>Género</Label>
-                    <RadioGroup
-                      value={formData.gender}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
-                      className="flex gap-6"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="masculino" id="masculino" />
-                        <Label htmlFor="masculino">Masculino</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="feminino" id="feminino" />
-                        <Label htmlFor="feminino">Feminino</Label>
-                      </div>
-                    </RadioGroup>
+                    <div className="space-y-2">
+                      <Label>Género</Label>
+                      <RadioGroup
+                        value={formData.gender}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
+                        className="flex gap-6 h-10 items-center"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="masculino" id="masculino" />
+                          <Label htmlFor="masculino">Masculino</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="feminino" id="feminino" />
+                          <Label htmlFor="feminino">Feminino</Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
@@ -275,30 +277,32 @@ export default function Members() {
                     Contactos
                   </h3>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="bg-slate-50 dark:bg-slate-800"
-                    />
-                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="bg-slate-50 dark:bg-slate-800"
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Telemóvel</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="bg-slate-50 dark:bg-slate-800"
-                    />
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Telemóvel</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="bg-slate-50 dark:bg-slate-800"
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">

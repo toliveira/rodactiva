@@ -48,11 +48,6 @@ export default function Home() {
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
-          <div className="text-center mb-8">
-            <span className="inline-block px-4 py-2 bg-orange-500/80 backdrop-blur-sm text-white rounded-full text-sm font-semibold mb-4">
-              🚴 Bem-vindo à Rodactiva
-            </span>
-          </div>
 
           <h1 className="text-6xl md:text-7xl font-bold mb-6 text-white text-center">
             Desafie seus <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">Limites</span>
