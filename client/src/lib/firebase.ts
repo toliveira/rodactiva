@@ -1,8 +1,8 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, connectFirestoreEmulator, initializeFirestore, memoryLocalCache } from 'firebase/firestore';
+import { connectFirestoreEmulator, initializeFirestore, memoryLocalCache } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getAnalytics, isSupported } from 'firebase/analytics';
-import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
+import { initializeAppCheck, ReCaptchaV3Provider, getToken, type AppCheck } from 'firebase/app-check';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
 
 // Firebase configuration from environment variables
@@ -54,9 +54,11 @@ if (typeof window !== 'undefined') {
 // Check if we're using emulators
 const useEmulator = import.meta.env.VITE_FIREBASE_USE_EMULATOR === 'true';
 
+let appCheck: AppCheck | undefined;
+
 // Initialize App Check (only if NOT using emulator and key is provided)
 if (!useEmulator && import.meta.env.VITE_FIREBASE_RECAPTCHA_KEY) {
-  initializeAppCheck(app, {
+  appCheck = initializeAppCheck(app, {
     provider: new ReCaptchaV3Provider(import.meta.env.VITE_FIREBASE_RECAPTCHA_KEY),
     isTokenAutoRefreshEnabled: true,
   });
@@ -135,3 +137,13 @@ export function trackRouteDownload(routeId: string, routeName: string) {
 }
 
 export default app;
+
+export async function getAppCheckToken(): Promise<string | null> {
+  try {
+    if (!appCheck) return null;
+    const { token } = await getToken(appCheck, false);
+    return token || null;
+  } catch (e) {
+    return null;
+  }
+}

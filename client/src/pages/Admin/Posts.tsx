@@ -42,7 +42,16 @@ export default function Posts() {
             ? query(collection(db, "posts"), orderBy("createdAt", "desc"), startAfter(after), limit(PAGE_SIZE))
             : query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(PAGE_SIZE));
         const snap = await getDocs(q);
-        const data = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Post));
+        const data = snap.docs.map((d) => {
+            const raw: any = d.data();
+            const created = (raw?.createdAt || raw?.post_date) as Timestamp | undefined;
+            return {
+                id: d.id,
+                title: raw?.title ?? raw?.post_title ?? "",
+                content: raw?.content ?? raw?.post_content ?? "",
+                createdAt: created ?? Timestamp.now(),
+            } as Post;
+        });
         setPages((prev) => {
             const next = [...prev];
             if (after) {

@@ -1,197 +1,205 @@
-import { useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { getGalleries } from '@/api/gallery';
+import { Gallery, GalleryMedia } from '@/types/gallery';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Image, Play, FileText, Loader } from 'lucide-react';
+import { Loader2, Play } from 'lucide-react';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
-import { useFirestoreDocuments } from '@/hooks/useFirestore';
 import SEO from '@/components/SEO';
 
-interface GalleryItem {
-  id: string;
-  type: 'photo' | 'video' | 'poster';
-  title: string;
-  description: string;
-  thumbnail: string;
-  url?: string;
-}
+// Define custom slide type
+type CustomSlide = {
+  type: 'youtube' | 'image' | 'video';
+  src: string;
+  thumbnail?: string;
+  index?: number;
+  sources?: { src: string; type: string }[];
+};
 
-export default function Gallery() {
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [selectedType, setSelectedType] = useState<string>('all');
+const ITEMS_PER_PAGE = 30;
 
-  // Fetch gallery items from Firestore
-  const { data: allGalleryItems, loading, error } = useFirestoreDocuments<GalleryItem>(
-    'gallery',
-    [],
-    { realtime: true }
-  );
+export default function GalleryPage() {
+  const [galleries, setGalleries] = useState<Gallery[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [currentGalleryMedia, setCurrentGalleryMedia] = useState<GalleryMedia[]>([]);
 
-  const filteredItems = allGalleryItems.filter(
-    (item) => selectedType === 'all' || item.type === selectedType
-  );
+  // Pagination state per gallery
+  const [pageState, setPageState] = useState<Record<string, number>>({});
 
-  const photos = filteredItems.filter((item) => item.type === 'photo');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getGalleries();
+        setGalleries(data);
+        // Initialize pagination state
+        const initialPages: Record<string, number> = {};
+        data.forEach(g => initialPages[g.id] = 1);
+        setPageState(initialPages);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const handlePhotoClick = (index: number) => {
-    const photoIndex = photos.findIndex(
-      (photo) => photo.id === filteredItems[index].id
-    );
-    setSelectedIndex(photoIndex);
+  const handleMediaClick = (media: GalleryMedia[], index: number) => {
+    setCurrentGalleryMedia(media);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
   };
 
+  const loadMore = (galleryId: string) => {
+    setPageState(prev => ({
+      ...prev,
+      [galleryId]: (prev[galleryId] || 1) + 1
+    }));
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
-      <SEO
-        title="Galeria"
-        description="Fotos e vídeos dos eventos da Rodactiva."
-      />
-      {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-slate-900 dark:text-white">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Galeria</span>
-          </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-300">
-            Reviva os melhores momentos dos nossos eventos
-          </p>
-        </div>
-      </section>
+    <div className="container mx-auto max-w-7xl py-12 px-4 min-h-screen">
+      <SEO title="Galeria" description="Galeria de fotos e vídeos da Rodactiva" />
 
-      {/* Filters */}
-      <section className="py-8 px-4 bg-white dark:bg-slate-900">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-wrap gap-2 justify-center">
-            <Button
-              variant={selectedType === 'all' ? 'default' : 'outline'}
-              onClick={() => setSelectedType('all')}
-              className={selectedType === 'all' ? 'bg-orange-600 hover:bg-orange-700' : ''}
-            >
-              Todos
-            </Button>
-            <Button
-              variant={selectedType === 'photo' ? 'default' : 'outline'}
-              onClick={() => setSelectedType('photo')}
-              className={selectedType === 'photo' ? 'bg-orange-600 hover:bg-orange-700' : ''}
-            >
-              <Image className="w-4 h-4 mr-2" />
-              Fotos
-            </Button>
-            <Button
-              variant={selectedType === 'video' ? 'default' : 'outline'}
-              onClick={() => setSelectedType('video')}
-              className={selectedType === 'video' ? 'bg-orange-600 hover:bg-orange-700' : ''}
-            >
-              <Play className="w-4 h-4 mr-2" />
-              Vídeos
-            </Button>
-            <Button
-              variant={selectedType === 'poster' ? 'default' : 'outline'}
-              onClick={() => setSelectedType('poster')}
-              className={selectedType === 'poster' ? 'bg-orange-600 hover:bg-orange-700' : ''}
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Cartazes
-            </Button>
-          </div>
-        </div>
-      </section>
+      <h1 className="text-4xl font-bold mb-8 text-center">Galeria</h1>
 
-      {/* Gallery Grid */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader className="w-8 h-8 text-orange-600 animate-spin" />
-              <span className="ml-2 text-slate-600 dark:text-slate-400">Carregando galeria...</span>
-            </div>
-          ) : error ? (
-            <div className="text-center py-12">
-              <p className="text-lg text-red-600 dark:text-red-400">
-                Erro ao carregar galeria: {error.message}
-              </p>
-            </div>
-          ) : filteredItems.length > 0 ? (
-            <div className="grid md:grid-cols-3 gap-8">
-              {filteredItems.map((item, index) => (
-                <Card
-                  key={item.id}
-                  className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
-                >
-                  <div className="relative h-64 overflow-hidden bg-slate-200 dark:bg-slate-800">
-                    <img
-                      src={item.thumbnail}
-                      alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    {item.type === 'video' && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors">
-                        <Play className="w-12 h-12 text-white" />
-                      </div>
-                    )}
-                    {item.type === 'poster' && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors">
-                        <FileText className="w-12 h-12 text-white" />
-                      </div>
-                    )}
+      {galleries.length === 0 ? (
+        <p className="text-center text-muted-foreground">Nenhuma galeria encontrada.</p>
+      ) : (
+        <Accordion type="single" collapsible defaultValue={galleries[0]?.id} className="w-full space-y-4">
+          {galleries.map((gallery) => {
+            const currentPage = pageState[gallery.id] || 1;
+            const displayedMedia = gallery.media?.slice(0, currentPage * ITEMS_PER_PAGE) || [];
+            const hasMore = (gallery.media?.length || 0) > displayedMedia.length;
+
+            return (
+              <AccordionItem key={gallery.id} value={gallery.id} className="border rounded-lg px-4 bg-card">
+                <AccordionTrigger className="hover:no-underline py-4">
+                  <div className="flex flex-col items-start text-left">
+                    <span className="text-xl font-semibold">{gallery.name}</span>
+                    <span className="text-sm text-muted-foreground font-normal">
+                      {new Date(gallery.date).toLocaleDateString()} • {gallery.media?.length || 0} items
+                    </span>
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                      {item.description}
-                    </p>
-                    {item.type === 'photo' && (
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => handlePhotoClick(index)}
-                      >
-                        Ver Foto
-                      </Button>
-                    )}
-                    {item.type === 'video' && item.url && (
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => window.open(item.url, '_blank')}
-                      >
-                        Ver Vídeo
-                      </Button>
-                    )}
-                    {item.type === 'poster' && item.url && (
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => window.open(item.url, '_blank')}
-                      >
-                        Descarregar
-                      </Button>
-                    )}
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-xl text-slate-600 dark:text-slate-400">
-                Nenhum item de galeria disponível no momento.
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
+                </AccordionTrigger>
+                <AccordionContent className="pb-4">
+                  {gallery.description && (
+                    <p className="text-muted-foreground mb-6">{gallery.description}</p>
+                  )}
 
-      {/* Lightbox */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {displayedMedia.map((item, index) => (
+                      <Card
+                        key={item.id}
+                        className="overflow-hidden cursor-pointer hover:opacity-90 transition-opacity group relative aspect-square p-0"
+                        onClick={() => handleMediaClick(gallery.media, index)}
+                      >
+                        <CardContent className="p-0 h-full">
+                          <img
+                            src={item.type === 'video' ? item.thumbnail : item.url}
+                            alt="Gallery Item"
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                          {item.type === 'video' && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
+                              <Play className="w-10 h-10 text-white fill-white opacity-80" />
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+
+                  {hasMore && (
+                    <div className="flex justify-center mt-8">
+                      <Button onClick={() => loadMore(gallery.id)} variant="outline">
+                        Carregar mais
+                      </Button>
+                    </div>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
+      )}
+
       <Lightbox
-        open={selectedIndex >= 0}
-        close={() => setSelectedIndex(-1)}
-        slides={photos.map((photo) => ({
-          src: photo.url || photo.thumbnail,
-          title: photo.title,
-        }))}
-        index={selectedIndex}
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        index={lightboxIndex}
+        slides={currentGalleryMedia.map((item, index) =>
+        ({
+          type: item.type === 'video' ? 'youtube' : 'image',
+          src: item.url,
+          thumbnail: item.thumbnail,
+          index
+        } as CustomSlide)
+        ) as any}
+        on={{
+          view: ({ index }) => setLightboxIndex(index),
+        }}
+        render={{
+          slide: ({ slide: s, rect }) => {
+            const slide = s as CustomSlide;
+            if (slide.type === 'youtube') {
+              const isCurrent = slide.index === lightboxIndex;
+
+              if (!isCurrent) {
+                return (
+                  <div className="w-full h-full flex items-center justify-center bg-black">
+                    {slide.thumbnail && (
+                      <img
+                        src={slide.thumbnail}
+                        alt="Video thumbnail"
+                        className="max-w-full max-h-full object-contain opacity-50"
+                      />
+                    )}
+                    <Play className="absolute w-12 h-12 text-white opacity-80" />
+                  </div>
+                );
+              }
+
+              const url = slide.src as string;
+              let videoId = '';
+              const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+              const match = url.match(regExp);
+              if (match && match[2].length === 11) videoId = match[2];
+
+              const width = Math.min(rect.width, 1280);
+              const height = (width * 9) / 16; // 16:9 aspect ratio
+
+              return (
+                <div className="w-full h-full flex items-center justify-center">
+                  <iframe
+                    width={width}
+                    height={Math.min(height, rect.height)}
+                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="max-w-full max-h-full"
+                  ></iframe>
+                </div>
+              );
+            }
+            return undefined;
+          }
+        }}
       />
     </div>
   );

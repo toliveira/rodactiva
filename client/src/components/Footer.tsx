@@ -21,34 +21,8 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Links Rápidos</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/activities">
-                  <span className="text-slate-400 hover:text-orange-400 cursor-pointer">Eventos</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/routes">
-                  <span className="text-slate-400 hover:text-orange-400 cursor-pointer">Percursos</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/gallery">
-                  <span className="text-slate-400 hover:text-orange-400 cursor-pointer">Galeria</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/members">
-                  <span className="text-slate-400 hover:text-orange-400 cursor-pointer">Sócios</span>
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Useful Links */}
+          {/* Spacer to maintain alignment */}
+          <div className="hidden md:block"></div>          {/* Useful Links */}
           <div>
             <h4 className="text-white font-semibold mb-4">Links Úteis</h4>
             <ul className="space-y-2 text-sm">
@@ -80,6 +54,26 @@ export default function Footer() {
                   className="text-slate-400 hover:text-orange-400"
                 >
                   ICNF
+                </a>
+              </li>
+              <li>
+                <a
+                  href="http://www.jf-castromarim.pt/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-orange-400"
+                >
+                  Junta de Freguesia de Castro Marim
+                </a>
+              </li>
+              <li>
+                <a
+                  href="http://www.odiana.pt/homepage/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-orange-400"
+                >
+                  Odiana
                 </a>
               </li>
             </ul>

@@ -80,7 +80,7 @@ export default function Contact() {
           </Card>
 
           {/* Map */}
-          <Card className="overflow-hidden h-[400px] shadow-lg">
+          <Card className="overflow-hidden h-[400px] shadow-lg p-0">
             <iframe
               width="100%"
               height="100%"

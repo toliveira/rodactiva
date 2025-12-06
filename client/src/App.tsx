@@ -16,6 +16,7 @@ import Contact from "./pages/Contact";
 import PrivateArea from "./pages/PrivateArea";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import AdminLogin from "./pages/Admin/Login";
+import ChangePassword from "./pages/Admin/ChangePassword";
 
 function SiteRouter() {
   return (
@@ -51,7 +52,8 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Switch>
-            <Route path="/admin/login" component={AdminLogin} />
+            <Route path="/admin/change-password" component={ChangePassword} />
+            <Route path="/admin" component={AdminLogin} />
             <Route path="/admin/*" component={AdminDashboard} />
             <Route component={SiteRouter} />
           </Switch>

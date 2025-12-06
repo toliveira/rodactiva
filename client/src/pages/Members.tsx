@@ -7,9 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader, Upload, CheckCircle, AlertCircle } from 'lucide-react';
-import { db, storage } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getAppCheckToken } from '@/lib/firebase';
 import SEO from '@/components/SEO';
 
 export default function Members() {
@@ -57,22 +55,22 @@ export default function Members() {
     setError(null);
 
     try {
-      let photoUrl = '';
+      const form = new FormData();
+      Object.entries(formData).forEach(([k, v]) => form.append(k, String(v)));
+      if (photo) form.append('photo', photo);
 
-      // Upload photo if exists
-      if (photo) {
-        const storageRef = ref(storage, `members/${Date.now()}_${photo.name}`);
-        const snapshot = await uploadBytes(storageRef, photo);
-        photoUrl = await getDownloadURL(snapshot.ref);
-      }
+      const appCheckToken = await getAppCheckToken();
 
-      // Save to Firestore
-      await addDoc(collection(db, 'members'), {
-        ...formData,
-        photoUrl,
-        status: 'pending',
-        createdAt: serverTimestamp(),
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/members`, {
+        method: 'POST',
+        headers: {
+          ...(appCheckToken ? { 'X-Firebase-AppCheck': appCheckToken } : {}),
+        },
+        body: form,
       });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to submit');
 
       setSuccess(true);
       setFormData({
@@ -91,9 +89,8 @@ export default function Members() {
         volunteer: false,
       });
       setPhoto(null);
-    } catch (err) {
-      console.error('Error submitting form:', err);
-      setError('Ocorreu um erro ao submeter o formulário. Por favor, tente novamente.');
+    } catch (err: any) {
+      setError(err.message || 'Ocorreu um erro ao submeter o formulário. Por favor, tente novamente.');
     } finally {
       setLoading(false);
     }
