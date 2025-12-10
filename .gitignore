@@ -144,4 +144,4 @@ vite.config.ts.timestamp-*
 # Server
 api/dist/
 api/uploads/
-api/src/firebaseServiceAccount.json
+api/scripts/firebaseServiceAccount.json
