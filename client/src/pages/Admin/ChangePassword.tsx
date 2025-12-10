@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { auth } from "../../lib/firebase";
+import httpClient from "@/lib/http";
 import { onAuthStateChanged } from "firebase/auth";
 import { Loader2 } from "lucide-react";
 
@@ -44,21 +45,13 @@ export default function ChangePassword() {
     setLoading(true);
 
     try {
-      const token = await auth.currentUser?.getIdToken();
-      if (!token) throw new Error("Not authenticated");
-
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/users/change-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ newPassword: password })
+      const response = await httpClient.post<{ success: boolean; message?: string; error?: string }>('/api/users/change-password', {
+         newPassword: password
       });
 
-      const data = await response.json();
+      const data = response.data;
 
-      if (response.ok && data.success) {
+      if (data.success) {
         // Force token refresh to update claims/firestore data if needed, or just redirect
         // We might need to reload the user profile to clear the mustChangePassword flag in local state if we track it there
         setLocation("/admin");

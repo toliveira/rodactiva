@@ -10,7 +10,7 @@ import {
     deleteDoc,
     Timestamp,
 } from "firebase/firestore";
-import { db, getAppCheckToken } from "../../lib/firebase";
+import { db } from "../../lib/firebase";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "@/components/ui/pagination";
@@ -44,6 +44,8 @@ type Member = {
     bio?: string;
     joinedAt?: Timestamp;
 };
+
+import httpClient from "@/lib/http";
 
 export default function Members() {
     const PAGE_SIZE = 10;
@@ -125,20 +127,9 @@ export default function Members() {
             Object.entries(formData).forEach(([k, v]) => form.append(k, String(v)));
             if (photo) form.append('photo', photo);
 
-            const appCheckToken = await getAppCheckToken();
-            
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/members`, {
-                method: 'POST',
-                headers: {
-                    ...(appCheckToken ? { 'X-Firebase-AppCheck': appCheckToken } : {}),
-                },
-                body: form,
+            await httpClient.post('/api/members', form, {
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Failed to create member');
-            }
 
             setShowCreate(false);
             // Reset form

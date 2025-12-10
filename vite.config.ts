@@ -34,6 +34,7 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
     },
     server: {
+      port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
       host: true,
       fs: {
         strict: true,

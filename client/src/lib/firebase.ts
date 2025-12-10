@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase/app';
 import { connectFirestoreEmulator, initializeFirestore, memoryLocalCache } from 'firebase/firestore';
-import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 import { initializeAppCheck, ReCaptchaV3Provider, getToken, type AppCheck } from 'firebase/app-check';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
@@ -23,9 +22,6 @@ const app = initializeApp(firebaseConfig);
 export const db = initializeFirestore(app, {
   localCache: memoryLocalCache(),
 });
-
-// Initialize Storage
-export const storage = getStorage(app);
 
 // Initialize Auth
 export const auth = getAuth(app);
@@ -69,11 +65,9 @@ if (import.meta.env.DEV && useEmulator) {
   try {
     const firestorePort = import.meta.env.VITE_FIRESTORE_EMULATOR_PORT || 8080;
     const authPort = import.meta.env.VITE_AUTH_EMULATOR_PORT || 9099;
-    const storagePort = import.meta.env.VITE_STORAGE_EMULATOR_PORT || 9199;
 
     connectFirestoreEmulator(db, 'localhost', Number(firestorePort));
     connectAuthEmulator(auth, `http://localhost:${authPort}`);
-    connectStorageEmulator(storage, 'localhost', Number(storagePort));
 
     console.log('✅ Firebase emulators connected');
   } catch (error) {

@@ -1,24 +1,29 @@
-import { storage } from './firebase';
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-  listAll,
-} from 'firebase/storage';
+import httpClient from './http';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 /**
- * Upload a file to Firebase Storage
- * @param path - Storage path (e.g., 'gallery/event-1/photo.jpg')
+ * Upload a file to Filesystem via API
+ * @param path - Storage path (e.g., 'gallery/event-1/photo.jpg') - currently used to extract folder
  * @param file - File to upload
  * @returns Download URL of the uploaded file
  */
 export async function uploadFile(path: string, file: File): Promise<string> {
   try {
-    const storageRef = ref(storage, path);
-    const snapshot = await uploadBytes(storageRef, file);
-    const downloadUrl = await getDownloadURL(snapshot.ref);
-    return downloadUrl;
+    // Extract folder from path (assume first segment is folder)
+    const parts = path.split('/');
+    const folder = parts[0] || 'general';
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await httpClient.post<{ url: string }>(`/api/upload/${folder}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data.url;
   } catch (error) {
     console.error('Error uploading file:', error);
     throw error;
@@ -26,13 +31,12 @@ export async function uploadFile(path: string, file: File): Promise<string> {
 }
 
 /**
- * Delete a file from Firebase Storage
- * @param path - Storage path of the file to delete
+ * Delete a file from Filesystem via API
+ * @param path - Storage path or URL of the file to delete
  */
 export async function deleteFile(path: string): Promise<void> {
   try {
-    const storageRef = ref(storage, path);
-    await deleteObject(storageRef);
+    await httpClient.post('/api/upload/delete', { path });
   } catch (error) {
     console.error('Error deleting file:', error);
     throw error;
@@ -45,14 +49,14 @@ export async function deleteFile(path: string): Promise<void> {
  * @returns Download URL
  */
 export async function getFileUrl(path: string): Promise<string> {
-  try {
-    const storageRef = ref(storage, path);
-    const downloadUrl = await getDownloadURL(storageRef);
-    return downloadUrl;
-  } catch (error) {
-    console.error('Error getting file URL:', error);
-    throw error;
+  // If path is already a URL, return it
+  if (path.startsWith('http')) {
+    return path;
   }
+  
+  // Otherwise, construct URL (assuming it lives in uploads directory)
+  // This might need adjustment depending on how paths are stored
+  return `${API_URL}/uploads/${path}`;
 }
 
 /**
@@ -61,14 +65,9 @@ export async function getFileUrl(path: string): Promise<string> {
  * @returns List of files
  */
 export async function listFiles(path: string) {
-  try {
-    const storageRef = ref(storage, path);
-    const result = await listAll(storageRef);
-    return result.items;
-  } catch (error) {
-    console.error('Error listing files:', error);
-    throw error;
-  }
+  // Not implemented for filesystem yet
+  console.warn('listFiles not implemented for filesystem storage', path);
+  return [];
 }
 
 /**

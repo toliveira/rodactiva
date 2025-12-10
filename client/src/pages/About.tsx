@@ -1,5 +1,5 @@
 import { Card } from '@/components/ui/card';
-import { Users, Target, Award, Heart, MapPin, Calendar, Bike } from 'lucide-react';
+import { Users, User, Target, Award, Heart, MapPin, Calendar, Bike } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { useFirestoreDocuments } from '@/hooks/useFirestore';
 
@@ -167,6 +167,36 @@ function TeamSection() {
 
   if (error || !team.length) return null;
 
+  const categoryOrder = ['Direcção', 'Assembleia Geral', 'Conselho Fiscal'];
+  const roleOrder = ['Presidente', 'Vice-Presidente', 'Tesoureiro', 'Secretário', 'Secretario', 'Vogal'];
+
+  const groupedTeam = team.reduce((acc: any, member: any) => {
+    const category = member.category || 'Outros';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(member);
+    return acc;
+  }, {});
+
+  const sortedCategories = Object.keys(groupedTeam).sort((a, b) => {
+    const indexA = categoryOrder.indexOf(a);
+    const indexB = categoryOrder.indexOf(b);
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+    return indexA - indexB;
+  });
+
+  sortedCategories.forEach(category => {
+    groupedTeam[category].sort((a: any, b: any) => {
+      const indexA = roleOrder.indexOf(a.role);
+      const indexB = roleOrder.indexOf(b.role);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
+  });
+
   return (
     <section className="py-20 px-4 bg-slate-50 dark:bg-slate-800/50">
       <div className="max-w-6xl mx-auto">
@@ -177,52 +207,66 @@ function TeamSection() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {team.map((person) => (
-            <Card
-              key={person.id}
-              className="overflow-hidden hover:shadow-lg transition-shadow duration-300"
-            >
-              <div className="h-2 bg-gradient-to-r from-orange-500 to-red-600"></div>
-              <div className="p-6">
-                <div className="mb-4">
-                  {person.image ? (
-                    <img
-                      src={person.image}
-                      alt={person.name}
-                      className="w-16 h-16 rounded-full object-cover mb-4"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-600 rounded-full flex items-center justify-center mb-4">
-                      <Users className="w-8 h-8 text-white" />
+        {sortedCategories.map((category) => (
+          <div key={category} className="mb-16">
+            <div className="flex justify-center mb-8">
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-white border-b-4 border-orange-500 pb-2 px-4">
+                {category}
+              </h3>
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-8">
+              {groupedTeam[category].map((person: any) => (
+                <Card
+                  key={person.id}
+                  className="overflow-hidden hover:shadow-lg transition-shadow duration-300 w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.33%-1.5rem)]"
+                >
+                  <div className="h-2 bg-gradient-to-r from-orange-500 to-red-600"></div>
+                  <div className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="flex-shrink-0">
+                        {person.image ? (
+                          <img
+                            src={person.image}
+                            alt={person.name}
+                            className="w-16 h-16 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-600 rounded-full flex items-center justify-center">
+                            <User className="w-8 h-8 text-white" />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                          {person.name}
+                        </h3>
+                        <p className="text-orange-600 dark:text-orange-400 font-semibold">
+                          {person.role}
+                        </p>
+                      </div>
                     </div>
-                  )}
-                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-                    {person.name}
-                  </h3>
-                  <p className="text-orange-600 dark:text-orange-400 font-semibold mb-3">
-                    {person.role}
-                  </p>
-                </div>
 
-                <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  {person.bio}
-                </p>
+                    <p className="text-slate-600 dark:text-slate-400 mb-4 text-sm">
+                      {person.bio}
+                    </p>
 
-                <div className="flex flex-wrap gap-2">
-                  {person.specialty?.split(', ').map((spec: string, index: number) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-sm font-semibold"
-                    >
-                      {spec}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+                    <div className="flex flex-wrap gap-2">
+                      {person.specialty?.split(', ').map((spec: string, index: number) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-xs font-semibold"
+                        >
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

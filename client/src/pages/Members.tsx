@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader, Upload, CheckCircle, AlertCircle } from 'lucide-react';
-import { getAppCheckToken } from '@/lib/firebase';
+import httpClient from '@/lib/http';
 import SEO from '@/components/SEO';
 
 export default function Members() {
@@ -59,18 +59,9 @@ export default function Members() {
       Object.entries(formData).forEach(([k, v]) => form.append(k, String(v)));
       if (photo) form.append('photo', photo);
 
-      const appCheckToken = await getAppCheckToken();
-
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/members`, {
-        method: 'POST',
-        headers: {
-          ...(appCheckToken ? { 'X-Firebase-AppCheck': appCheckToken } : {}),
-        },
-        body: form,
+      await httpClient.post('/api/members', form, {
+          headers: { 'Content-Type': 'multipart/form-data' },
       });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to submit');
 
       setSuccess(true);
       setFormData({

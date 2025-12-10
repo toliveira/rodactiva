@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth } from "../../lib/firebase";
+import httpClient from "@/lib/http";
 import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -71,16 +72,8 @@ export default function Users() {
 
   const fetchUsers = async () => {
     try {
-      const token = await auth.currentUser?.getIdToken();
-      if (!token) return;
-
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/users`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      const data = await response.json();
+      const response = await httpClient.get<{ success: boolean; users: User[]; error?: string }>('/api/users');
+      const data = response.data;
       if (data.success) {
         setUsers(data.users);
       } else {
@@ -107,17 +100,8 @@ export default function Users() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const token = await auth.currentUser?.getIdToken();
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/users`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-      
-      const data = await response.json();
+      const response = await httpClient.post<{ success: boolean; message?: string; error?: string }>('/api/users', formData);
+      const data = response.data;
       if (data.success) {
         toast.success("User created successfully");
         setIsCreateOpen(false);
@@ -139,21 +123,12 @@ export default function Users() {
     
     setIsSubmitting(true);
     try {
-      const token = await auth.currentUser?.getIdToken();
-      
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/users/${selectedUser.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
+      const response = await httpClient.put<{ success: boolean; error?: string }>(`/api/users/${selectedUser.id}`, {
             name: formData.name,
             role: formData.role
-        })
       });
 
-      const data = await response.json();
+      const data = response.data;
       if (data.success) {
         toast.success("User updated successfully");
         setIsEditOpen(false);
@@ -171,15 +146,9 @@ export default function Users() {
 
   const handleDelete = async (user: User) => {
     try {
-      const token = await auth.currentUser?.getIdToken();
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/users/${user.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await httpClient.delete<{ success: boolean; error?: string }>(`/api/users/${user.id}`);
 
-      const data = await response.json();
+      const data = response.data;
       if (data.success) {
         toast.success("User deleted successfully");
         fetchUsers();

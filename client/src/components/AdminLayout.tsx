@@ -69,6 +69,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <Link href="/admin/members" className="hover:bg-neutral-800 rounded px-2 py-1">Members</Link>
                     <Link href="/admin/comments" className="hover:bg-neutral-800 rounded px-2 py-1">Comments</Link>
                     <Link href="/admin/users" className="hover:bg-neutral-800 rounded px-2 py-1">Users</Link>
+                    <Link href="/admin/sponsors" className="hover:bg-neutral-800 rounded px-2 py-1">Sponsors</Link>
                     <Link href="/admin/gallery" className="hover:bg-neutral-800 rounded px-2 py-1">Gallery</Link>
                 </nav>
             </aside>

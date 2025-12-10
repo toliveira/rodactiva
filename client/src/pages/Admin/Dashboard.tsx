@@ -7,6 +7,7 @@ import Routes from "./Routes";
 import Members from "./Members";
 import Comments from "./Comments";
 import Users from "./Users";
+import Sponsors from "./Sponsors";
 import GalleriesList from "./Gallery";
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -179,6 +180,7 @@ export default function AdminDashboard() {
                 <Route path="/admin/members" component={Members} />
                 <Route path="/admin/comments" component={Comments} />
                 <Route path="/admin/users" component={Users} />
+                <Route path="/admin/sponsors" component={Sponsors} />
                 <Route path="/admin/gallery" component={GalleriesList} />
                 {/* fallback */}
                 <Route component={() => <h2>Select a section from the menu.</h2>} />
